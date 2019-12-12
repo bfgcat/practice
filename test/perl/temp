@@ -1,0 +1,11 @@
+@INC contains:
+/usr/lib/perl5/5.10/i686-cygwin
+/usr/lib/perl5/5.10
+/usr/lib/perl5/site_perl/5.10/i686-cygwin
+/usr/lib/perl5/site_perl/5.10
+/usr/lib/perl5/vendor_perl/5.10/i686-cygwin
+/usr/lib/perl5/vendor_perl/5.10
+/usr/lib/perl5/vendor_perl/5.10
+/usr/lib/perl5/site_perl/5.8
+/usr/lib/perl5/vendor_perl/5.8
+.

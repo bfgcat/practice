@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opt>
+
+
+<!-- ================ -->
+<!-- client components -->
+<!-- ================ -->
+
+    <Component name="game_client" nozip="1">
+      <directory name="config\">
+        <file>ProjectVersion</file>
+      </directory>
+      <directory name="data\">
+        <file>client_foo_*.dat</file>
+        <file>client_foo1_*.dat</file>
+        <file>client_foo2.dat</file>
+	<file installerFlags="recursesubdirs createallsubdirs">browser\*</file>
+      </directory>
+    </Component>
+
+    <Component name="game_client_language"  nozip="1">
+      <directory name="data\">
+        <file installerFlags="; Languages: en_GB">client_local_EN_GB.dat</file>
+        <file installerFlags="; Languages: de">client_local_DE.dat</file>
+        <file installerFlags="; Languages: fr">client_local_FR.dat</file>
+      </directory>
+      <directory name="payload\Movies\">
+        <file installerFlags="; Languages: en_GB">raw\en_gb\logo\*.jpg</file>
+        <file installerFlags="; Languages: fr">raw\fr\logo\*.jpg</file>
+        <file installerFlags="; Languages: de">raw\de\logo\*.jpg</file>
+      </directory>
+      <directory name="tools\dll\">
+        <file sign="1">corestrings.dll</file>
+      </directory>
+    </Component>
+
+    <Component name="game_client_debug">
+      <directory name="output\bin\game\win32\debug\">
+        <file>gameclient.*</file>
+      </directory>
+      <directory name="tools\dll\">
+        <file>dbghelp.dll</file>
+        <file>dpvsd.dll</file>
+        <file>pl.dll</file>
+        <file>sqlite3.dll</file>
+      </directory>
+      <directory name="sdk\granny\2.7.0.30\bin\win32\">
+        <file>granny2_debug.dll</file>
+      </directory>
+      <directory name="sdk\MSVC\7.2003\dll\">
+        <file>msvcp71d.dll</file>
+        <file>msvcr71d.dll</file>
+      </directory>
+      <directory name="data\">
+        <file>client_internal.dat</file>
+      </directory>
+    </Component>
+
+
+<!-- ================ -->
+<!-- server components -->
+<!-- ================ -->
+
+    <Component name="game_server_base" nozip="1">
+      <directory name="tools\dll\">
+        <file>granny2.dll</file>
+        <file>zlib.dll</file>
+        <file>zlib1T.dll</file>
+        <file>sqlite3.dll</file>
+      </directory>
+      <directory name="sdk\MSVC\7.2003\dll\">
+        <file>msvcp71.dll</file>
+        <file>msvcr71.dll</file>
+      </directory>
+      <directory name="data\">
+        <file>server_*.dat</file>
+        <file>READONLY_DIDs.dat</file>
+      </directory>
+      <directory name="src\engine\server\gls\">
+        <file>*.xsl</file>
+      </directory>
+    </Component>
+
+    <Component name="game_debug">
+      <directory name="output\bin\game\win32\debug\">
+        <file>gameserver*.*</file>
+      </directory>
+      <directory name="tools\dll\">
+        <file>granny2_debug.dll</file>
+      </directory>
+      <directory name="sdk\MSVC\7.2003\dll\">
+        <file>msvcp71d.dll</file>
+        <file>msvcr71d.dll</file>
+      </directory>
+    </Component>
+
+
+
+<!-- ================ -->
+<!-- extra tools -->
+<!-- ================ -->
+
+    <Component name="game_prop">
+      <directory name="tools\bin\">
+        <file>foo.exe</file>
+        <file>foo1.exe</file>
+        <file>foo2.exe</file>
+        <file>goo.exe</file>
+        <file>goo1.exe</file>
+      </directory>
+      <directory name="help\dll\">
+        <file>dbhelp.dll</file>
+        <file>khelp.dll</file>
+      </directory>
+      <directory name="MSVC\7.2003\dll\">
+        <file>msvcp71.dll</file>
+        <file>msvcp71d.dll</file>
+        <file>msvcr71.dll</file>
+        <file>msvcr71d.dll</file>
+      </directory>
+    </Component>
+
+    <Component name="game_foo2" nozip="1">
+      <directory name="src\engine\odbc\">
+        <file>datasources-example.ini</file>
+      </directory>
+      <directory name="tools\dll\">
+        <file>dbghelp.dll</file>
+        <file>ntwdblib.dll</file>
+      </directory>
+      <directory name="tools\bin\">
+        <file>getit.exe</file>
+        <file>issql.exe</file>
+        <file>S.pl</file>
+      </directory>
+      <directory name="output\bin\game\debug\">
+        <file>gameslimclient.*</file>
+      </directory>
+      <directory name="output\bin\engine\debug\">
+        <file>SqlSetup.*</file>
+        <file>server_config.*</file>
+      </directory>
+      <directory name="output\bin\game\">
+        <file>release\gameslimclient.*</file>
+      </directory>
+      <directory name="output\bin\engine\">
+        <file>release\ping_client.*</file>
+      </directory>
+      <directory name="sdk\7zip\4.23\">
+        <file>7za.exe</file>
+      </directory>
+      <directory name="sdk\MSVC\7.2003\dll\">
+        <file>msvcp71.dll</file>
+        <file>msvcr71.dll</file>
+        <file>msvcp71d.dll</file>
+        <file>msvcr71d.dll</file>
+      </directory>
+      <directory name="sdk\MSVC\8.2005\redist\">
+        <file>vcredist_x86_VC8_SP1.exe</file>
+      </directory>
+      <directory name="tools\script\eng\">
+        <file>DelRollingLogs.bat</file>
+      </directory>
+    </Component>
+</opt>

@@ -1,0 +1,171 @@
+ Volume in drive C has no label.
+ Volume Serial Number is E481-D564
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles
+
+10/22/2019  11:45 AM    <DIR>          .
+10/22/2019  11:45 AM    <DIR>          ..
+07/26/2012  09:48 AM             7,563 ad2p4-lookup.pl
+06/24/2013  11:19 AM               129 ad2p4userupdate.sh
+12/11/2013  11:07 AM             3,870 BFD.pl
+10/13/2011  04:48 PM             6,287 BF_XML_parser.pl
+02/15/2011  03:31 PM               699 check_disk_space.pl
+10/18/2013  10:30 AM               357 CIBuildDatabase_Query.pl
+09/09/2014  05:36 PM            12,684 clean_deploy_revs.pl
+03/20/2013  03:09 PM            10,171 convert_username.pl
+04/30/2013  08:28 AM               525 create-oblit-client.pl
+10/13/2011  05:35 PM               832 createProjectIdExportScript.pl
+10/19/2012  02:29 PM                96 create_md5hash.pl
+10/06/2016  07:00 PM    <DIR>          cron
+12/18/2015  06:06 PM               299 DevOpsDBtest.pl
+03/08/2012  05:45 PM               270 dirtest.pl
+09/25/2012  11:18 AM               535 dirtest2.pl
+10/13/2011  05:58 PM            10,562 exportBFprojects.bat
+03/16/2011  01:19 PM               579 filemove.pl
+11/21/2013  05:43 PM               555 finduser.sh
+05/01/2013  09:38 AM             1,826 find_dups.pl
+10/08/2013  04:39 PM             2,419 find_perforce_user.pl
+09/12/2014  11:35 AM             1,488 find_revs.pl
+03/10/2014  10:50 AM             1,018 find_revs2.pl
+03/20/2014  04:31 PM               161 foreach_test.pl
+10/03/2012  04:17 PM               963 getbuildID.pl
+05/02/2011  11:33 AM               943 getGameFromBranch.pl
+10/02/2014  02:02 PM               140 getOS.pl
+10/08/2014  10:15 AM             2,789 getP4Users.pl
+10/21/2014  02:31 PM                74 getPath.pl
+10/13/2011  05:35 PM               832 getProjectIds.pl
+10/13/2011  05:58 PM               860 getProjectIdsGenBatchScript.pl
+08/13/2012  10:04 AM               892 get_CL.pl
+03/22/2013  09:41 AM               669 get_env_value.pl
+10/19/2015  05:40 PM             6,982 get_MDF_packages_from pom_xmls.pl
+11/05/2015  02:52 PM             7,433 get_MN_packages.pl
+10/16/2019  05:14 PM                53 hello.pl
+01/28/2011  05:29 PM                73 INCtest.pl
+10/22/2019  11:47 AM                 0 junk
+10/06/2016  06:53 PM    <DIR>          lib
+10/06/2016  07:02 PM    <DIR>          log
+09/20/2013  02:10 PM             2,419 logPlay.pl
+04/23/2013  02:56 PM               643 move-filter.pl
+09/11/2013  04:10 PM               456 mylogger.conf
+09/30/2010  11:54 AM             2,015 myparseXMLfile.pl
+09/21/2011  04:17 PM             2,750 new.pl
+02/03/2011  06:51 PM               217 OutputSomeText.pl
+01/27/2014  06:46 PM             1,071 p4cfg_update.pl
+02/02/2014  10:40 AM             6,531 P4ConfigUpdate.pl
+10/19/2012  11:27 AM             1,002 p4lockdown.pl
+03/20/2013  03:09 PM             1,235 p4spacemonitor.sh
+06/14/2013  07:21 AM             1,692 p4trueup.pl
+09/26/2014  10:56 AM             3,803 p4unloadedWSmonitor.pl
+06/27/2014  04:56 PM                 0 p4userCheck.pl
+01/16/2014  03:17 PM             3,740 p4validatetest.pl
+12/18/2013  12:26 PM            10,644 p4workspacemonitor.pl
+12/18/2012  11:58 AM             8,339 P4_Checkin_Build.pl
+03/22/2011  11:45 AM               794 p4_dupe.pl
+02/07/2011  03:54 PM               720 p4_dupe_test.pl
+04/15/2013  01:17 PM            16,697 perforce
+01/22/2013  05:50 PM               540 perforce.pl
+11/20/2013  10:48 AM               151 PerforceServerPortList.txt
+01/09/2014  03:51 PM                68 PerforceTrigger.log
+05/27/2011  09:45 AM                54 PERL5LIB.pl
+05/22/2012  10:38 AM               599 PerlEnv.pl
+10/04/2010  10:01 AM             2,754 PerlExample1.pl
+06/01/2011  04:20 PM             1,728 PerlExample2.pl
+09/17/2015  03:33 PM               464 PerlMath.pl
+09/10/2013  04:28 PM            11,860 PerlNotes.docx
+05/20/2011  02:49 PM             2,415 PerlTest01.pl
+06/03/2011  04:33 PM               717 PerlTest01.txt
+06/02/2011  03:08 PM             2,880 PerlTest01_fixed.pl
+03/04/2015  03:20 PM             1,616 prepTest.pl
+12/07/2010  02:46 PM               381 print_arg.pl
+10/13/2011  05:35 PM             1,640 project_id_list.txt
+10/13/2011  11:47 AM            10,126 project_list.txt
+06/25/2013  01:34 PM               700 recover_unloaded.pl
+02/19/2014  07:06 PM    <DIR>          remote
+04/30/2013  08:28 AM             2,051 remove-domain.pl
+03/04/2015  05:40 PM               230 removeItemRecurseForce.ps1
+05/15/2013  09:12 AM               660 rename.pl
+12/02/2010  04:48 PM             7,589 return-environment.pl
+04/06/2011  11:02 AM               464 return_env_value.pl
+06/19/2013  04:08 PM               538 revertonsubmit.pl
+10/10/2010  10:12 AM             2,350 RevString.pl
+06/06/2013  10:07 AM               268 rotate_labels.pl
+07/23/2014  03:30 PM             1,221 SimpleLDAP_AD_auth.pl
+05/23/2012  01:39 PM             2,041 subset_buildshell.pl
+05/23/2012  01:23 PM             1,353 subset_return_env.pl
+06/17/2013  03:18 PM               133 testcheck.pl
+10/13/2014  10:53 AM    <DIR>          testdir
+04/02/2015  02:08 PM             3,915 testDiskUsage.pl
+02/20/2014  02:38 PM               847 TestP4perlmodule.pl
+02/20/2014  02:43 PM               709 TestP4perlmodule2.pl
+01/09/2014  03:45 PM               448 test_arg.pl
+09/17/2015  04:54 PM             3,089 test_filefind.pl
+02/09/2011  12:25 PM               403 test_free_space.pl
+02/08/2011  06:47 PM             2,549 test_free_space_old1.pl
+12/10/2010  05:26 PM               458 test_int_arg.pl
+10/08/2015  04:27 PM             1,021 test_lists.pl
+12/07/2010  12:35 PM               277 test_mail.pl
+12/06/2010  01:57 PM               652 time_play.pl
+10/09/2015  10:56 AM               880 time_play2.pl
+10/09/2015  10:31 AM               275 time_test.pl
+01/09/2014  03:37 PM               415 TriggerTest.pl
+01/09/2014  03:56 PM               619 TriggerTestPost.pl
+01/09/2014  04:00 PM               618 TriggerTestPre.pl
+03/22/2013  09:40 AM               381 true-false-test.pl
+07/21/2014  04:19 PM             2,009 UserCheck.pl
+12/07/2010  12:35 PM               277 var_set_test.pl
+02/07/2011  06:57 PM                73 WhatOS.pl
+             104 File(s)        227,902 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\cron
+
+10/06/2016  07:00 PM    <DIR>          .
+10/06/2016  07:00 PM    <DIR>          ..
+03/24/2014  04:29 PM               510 backuprotate.sh
+03/24/2014  05:29 PM             1,114 p4dfspacemonitor.sh
+03/24/2014  04:29 PM               831 p4spacemonitor.sh
+03/24/2014  04:29 PM            10,521 p4workspacemonitor.pl
+03/24/2014  04:29 PM             1,231 scheduled_oblit.sh
+03/24/2014  04:29 PM               320 scheduled_oblit_wrapper.sh
+               6 File(s)         14,527 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\lib
+
+10/06/2016  06:53 PM    <DIR>          .
+10/06/2016  06:53 PM    <DIR>          ..
+10/06/2016  06:55 PM    <DIR>          P4
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\lib\P4
+
+10/06/2016  06:55 PM    <DIR>          .
+10/06/2016  06:55 PM    <DIR>          ..
+06/25/2014  02:17 PM             5,552 P4Mod.pm
+04/12/2013  02:25 PM             2,745 P4Trigger.pm
+               2 File(s)          8,297 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\log
+
+10/06/2016  07:02 PM    <DIR>          .
+10/06/2016  07:02 PM    <DIR>          ..
+09/12/2014  10:43 AM           181,253 clean_deploy_revs.hendrix.log
+09/12/2014  10:17 AM           299,406 clean_deploy_revs.hendrix_dev.log
+09/12/2014  10:54 AM            18,067 find_revs.hendrix.log
+09/12/2014  09:46 AM            18,067 find_revs.hendrix_dev.log
+09/12/2014  09:45 AM            10,422 find_revs.hendrix_qa.log
+               5 File(s)        527,215 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\remote
+
+02/19/2014  07:06 PM    <DIR>          .
+02/19/2014  07:06 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Brian\Dropbox\PerlTestFiles\testdir
+
+10/13/2014  10:53 AM    <DIR>          .
+10/13/2014  10:53 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+     Total Files Listed:
+             117 File(s)        777,941 bytes
+              20 Dir(s)  788,011,053,056 bytes free

@@ -1,0 +1,31 @@
+
+# Chapter 2 Video 2 - jenkins install
+# key name may not end in .pem if you generated it on your own computer.
+# if you generated your key locally and used the default name, you won't need the -i option or
+# to specify the key path. If you donwloaed it from AWS you will need to add the -i and path
+ssh -i ~/.ssh/YOUR-KEY-NAME.pem ec2-user@YOUR-INSTANCE-PUBLIC-DNS-HERE
+
+# installing jenkins
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
+sudo yum install java-1.8.0
+sudo yum remove java-1.7.0-openjdk
+sudo yum install jenkins -y
+sudo sytemctl start jenkins.service
+sudo sytemctl enable jenkins.service
+
+# jenkins setup
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# install docker
+sudo yum install docker
+sudo systemctl start docker.service
+sudo systemctl enable docker.service
+sudo usermod -a -G docker ec2-user
+sudo usermod -a -G docker jenkins
+docker run hello-world
+sudo reboot
+sudo -u jenkins docker run hello-world
+
+# jenkins test job build step
+docker run hello-world

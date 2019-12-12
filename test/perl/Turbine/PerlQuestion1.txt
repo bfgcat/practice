@@ -1,0 +1,27 @@
+Using Perl 
+1) Using a Perl script parse the file SettingsTEST.xml and identify each section that has the variable nozip="1". Then output the directory structure as shown in the example below.
+
+Example XML
+    <Component name="game_client" nozip="1">
+      <directory name="config\">
+        <file>ProjectVersion</file>
+      </directory>
+      <directory name="data\">
+        <file>client_foo_*.dat</file>
+        <file>client_foo1_*.dat</file>
+        <file>client_foo2.dat</file>
+	<file installerFlags="recursesubdirs createallsubdirs">browser\*</file>
+      </directory>
+    </Component>
+
+
+Example Output
+
+{root of output directory}
+   ----- game_client
+	---- config
+        ---- data
+   ----- {next Component}
+        ---- {next Component dir}
+  
+2) Based on the SettingsTEST.xml file what do you think this file is used for and What questions do you have to further define this file?

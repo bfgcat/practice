@@ -1,0 +1,14 @@
+<config servertype="sunhosts" reporttype="pathces and levels">
+	<server name="atlas" osname="solaris" osversion="2.8">
+		<address>192.168.0.2</address>
+		<patchlevel>Generic_108343-10</patchlevel>
+		<perlversion>5.6.1</perlversion>
+	</server>
+
+	<server name="carrie" osname="solaris" osversion="2.8">
+		<address>192.168.1.10</address>
+		<patchlevel>Generic_108343-12</patchlevel>
+		<perlversion>5.6.2</perlversion>
+	</server>
+
+</config>

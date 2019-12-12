@@ -1,0 +1,5 @@
+docker run hello-world
+aws ecr get-login --no-include-email --region us-east-1 > ./login
+source ./login
+docker tag hello-world:latest ACCOUNT_ID.REGION.amazonaws.com/hello-world:latest
+docker push ACCOUNT_ID.REGION.amazonaws.com/hello-world:latest

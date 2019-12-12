@@ -1,0 +1,14 @@
+<cars>
+	<car Make="Ford" Model="Fiesta">
+		<seats>4</seats>
+		<interior>Cloth</interior>
+	</car>
+	<car Make="Porsche" Model="911">
+		<seats>2</seats>
+		<interior>Leather</interior>
+	</car>
+	<car Make="Toyota" Model="Sienna">
+		<seats>8</seats>
+		<interior>Cloth</interior>
+	</car>
+</cars>

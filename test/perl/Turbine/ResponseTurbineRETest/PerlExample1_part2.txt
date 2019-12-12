@@ -1,0 +1,28 @@
+From PerlQuestion1.txt
+
+# Brian Gillespie
+# Release Engineering Candidate
+# 30 Sep 2010
+
+From file PerlQuestion1:
+2) Based on the SettingsTEST.xml file what do you think this file is used for
+and what questions do you have to further define this file?
+
+First question: Is this file correct or does it contain an error?   The
+terminator for the first Component element appears to have been moved to the
+end of the file.
+
+The file looks like it is a packaging list used by some installer build
+utility. It contains client, server and tools sections It IDs libraries
+and debug components. I don't see enough branch/version information, perhaps
+this is determined by the files location(?).
+
+Questions:
+Is the file location on the system a factor in determining branch/version
+information?
+
+What is the path to the file?
+
+What installer tools are used?
+
+

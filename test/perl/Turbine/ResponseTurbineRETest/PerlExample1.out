@@ -1,0 +1,25 @@
+C:/test/Turbine
+----- game_foo2
+     ---- output\bin\engine\
+     ---- output\bin\game\debug\
+     ---- sdk\MSVC\8.2005\redist\
+     ---- sdk\7zip\4.23\
+     ---- src\engine\odbc\
+     ---- sdk\MSVC\7.2003\dll\
+     ---- tools\dll\
+     ---- output\bin\game\
+     ---- tools\bin\
+     ---- output\bin\engine\debug\
+     ---- tools\script\eng\
+----- game_client_language
+     ---- tools\dll\
+     ---- payload\Movies\
+     ---- data\
+----- game_server_base
+     ---- src\engine\server\gls\
+     ---- sdk\MSVC\7.2003\dll\
+     ---- tools\dll\
+     ---- data\
+----- game_client
+     ---- data\
+     ---- config\

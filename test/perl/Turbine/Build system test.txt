@@ -1,0 +1,116 @@
+The following is a list of actions required to create a build.  Please explain how you would implement each action and in what order. 
+Please give an example of the layout of all actions.
+
+Logging:
+	Each of the actions below will return a 0 if successful or an error code number if it fails.
+	All logs should appear in the directory "output\logs"
+
+If the action fails, take the following actions:
+	1) If a critical action, error out the build.
+	2) If a non-critical action, continue with a warning.
+
+Pre-implementation steps:
+	Choose an SCM tool of your choice
+	Choose a build automation system of your choice
+
+Other Information:	
+	The build tree is located in a directory called "d:\build\foo" - All directories listed continue from there.
+
+
+Each action below is in the following format:
+
+{action group}
+	{Action Sub-Name} (optional)
+	{details}
+
+
+Actions:
+
+	retrieve_changelist_information: (Critical Action) 
+		perl tools\build\bin\Get_Changelists.pl
+
+	Build xlibs: (Internal Build Tool)
+
+		release_xlibs:open xlibs for edit "Checkout the following files": (Critical Action) 
+			data\game\lang\client.xlib
+			data\game\lang\client-db.xlib
+			data\game\lang\server.xlib
+			data\game\lang\server-db.xlib
+
+		Run xjam: (This finds all files and compiles them, Critical Action) 
+			xjam.pl COLOR=0 PERF=1 RELEASE=1
+
+		strip client xlib: (Critical Action)
+			xlink --stripclient output\lang\release\admin\perf\client.xlib  -o output\lang\release\admin\perf\client-db.xlib
+
+		Checkin xlibs checked out in open xlibs step: (Critical Action) 
+
+
+	debug_binaries: (This builds the debug executables gameserver.exe and gameclient.exe)
+
+		WIN32 Debug game client: (Critical Action) 
+			game-run.pl --mode debug --target gameclient --type bin --single
+
+		WIN32 Debug game Server: (Critical Action) 
+			game-run.pl --mode debug --target gameserver --type bin --single
+	
+	release_binaries: (this builds the release executables gameserver.exe and gameclient.exe)
+
+		WIN32 release game client: (Non-Critical Action)
+			game-run.pl --mode release --target gameclient --type bin --single
+
+		WIN32 release game Server: (Non-Critical Action)
+			game-run.pl --mode release --target gameserver --type bin --single
+
+
+	build data: (This builds the actual data)
+		Client data: (Critical Action) 
+	 		gameclientdata.exe -create -f clientdata.adderlist > clientdata_output.log
+
+		Server data: (Critical Action) 
+		 	gameserverdata.exe -create -localize -f serverdata.adderlist > serverdata_output.log
+
+	debug_tools: (Builds tools used by QA and live support)
+
+		WIN32 Release SQLSETUP: (Non-Critical Action)
+			game-run.pl --mode release --target sqlsetup --type bin --single
+
+		WIN32 Release PROP2XML: (Non-Critical Action)
+			game-run.pl --mode release --target prop2xml --type bin --single
+
+		WIN32 Release SERVER_CONFIG: (Non-Critical Action)
+			game-run.pl --mode release --target server_config --type bin --single
+
+		WIN32 Debug XLF2DAT: (Non-Critical Action)
+			game-run.pl --mode debug --target xlf2dat--type bin --single
+
+		WIN32 Release XLF2DAT: (Non-Critical Action)
+			game-run.pl --mode release --target xlf2dat --type bin --single
+	
+		WIN32 Release PING_CLIENT: (Non-Critical Action)
+			game-run.pl --mode release --target ping_client --type bin --single
+
+		WIN32 release GSE_TEST: (Non-Critical Action)
+			game-run.pl --mode release --target gse_test --type bin --single
+
+		WIN32 Debug GSE_TEST: (Non-Critical Action)
+			game-run.pl --mode debug --target gse_test --type bin --single
+
+		WIN32 Release WINDBG_CLIENT: (Non-Critical Action)
+			game-run.pl --mode release --target windbg_client --type bin --single
+
+		WIN32 Release WINDBG_SERVER: (Non-Critical Action)
+			game-run.pl --mode release --target windbg_server--type bin --single
+
+
+	build debug adders: (this builds the data build tools "gameclientdata.exe and gameserverdata.exe")
+		Build clientdata: (Critical Action) 
+			game-run.pl --mode debug --target gameclientdata --type bin --single
+		Build serverdata: (Critical Action) 
+			game-run.pl --mode debug --target gameserverdata --type bin --single
+
+
+Additional Questions:
+ 
+	1) What other actions do you think should be added to make this build ready to be released?
+

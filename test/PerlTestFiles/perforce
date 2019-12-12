@@ -1,0 +1,646 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------------------------
+# Turbine 2012
+# Perforce - Control script for Perforce.
+#------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------
+# Get Parameters From Command Prompt
+#-----------------------------------------------------------------------------------------------
+ACTION=$1
+DEPOT=$2
+CHECKPOINT=$3
+
+TIMEOUT=10
+P4D_PID=/var/run/perforce/p4d.$DEPOT
+P4BROKER_PID=/var/run/perforce/p4broker.$DEPOT
+P4D_CONF=/perforce/$DEPOT/p4d.conf
+P4BROKER_CONF=/perforce/$DEPOT/p4broker.conf
+
+if [ -z $ACTION ]; then
+	echo "Action Required!"
+	echo "Usage:"
+	echo " perforce <action> <depot>"
+	exit
+fi
+
+if [ -z $DEPOT ]; then
+	echo "Depot Required!"
+	echo "Usage:"
+	echo " perforce <action> <depot>"
+	exit
+fi
+
+if [ -z $CHECKPOINT ]; then
+	CHECKPOINT_FILE=/perforce/$DEPOT/backup/$CHECKPOINT
+fi
+
+#-----------------------------------------------------------------------------------------------
+# Can't do much (except create) without a configuration file
+#-----------------------------------------------------------------------------------------------
+if [ -f $P4D_CONF ]; then
+	. $P4D_CONF
+	export P4D P4BROKER P4 P4ROOT P4LOG LOCKFILE P4USER P4GROUP P4PORT P4BACKUP P4JOURNAL
+	
+	# If the log file doesn't exist we need the perforce user to create it so it gets the proper permissions
+	if [ -z $P4LOG ]; then
+		touch $P4LOG
+		chown ${P4USER}:${P4GROUP} $P4LOG
+	fi
+	elif [ "$1" != "create" ]
+	then
+		"No config file found for depot $DEPOT"
+	exit
+fi
+
+#-----------------------------------------------------------------------------------------------
+# See if Perforce is running
+#-----------------------------------------------------------------------------------------------
+if [ -e "$P4D_PID" ]; then
+	PID=$(cat $P4D_PID)
+	ps cax | grep $PID > /dev/null
+	running=$?
+else
+	running=1
+	PID=0
+fi
+
+
+#------------------------------------------------------------------------------------------------
+# Functions
+#------------------------------------------------------------------------------------------------
+# Function write header
+#-----------------------------------------------------------------------------------------------
+function header
+{
+	DATE=`date +"%D"`
+	FULLDATE=`date +"%a %b %d %X %Y"`
+	echo "################### Perforce Script 1.0 ($DATE) ####################"
+	echo "        Processing Initiated: $FULLDATE"
+	echo ""
+	echo "                        Host: $P4PORT"
+	echo "                       Depot: $DEPOT"
+	echo "                     COMMAND: $ACTION"
+	echo "#######################################################################"
+	echo ""
+}
+
+#-----------------------------------------------------------------------------------------------
+# Start the specified Perforce Service
+#-----------------------------------------------------------------------------------------------
+function start
+{
+	# Unset Error
+	ERROR=''
+	
+	# If the log file doesn't exist we need the perforce user to create it so it gets the proper permissions
+	if [ -z $P4LOG ]; then
+		touch $P4LOG
+		chown ${P4USER}:${P4GROUP} $P4LOG
+	fi
+
+
+	# Start Perforce Service
+	su perforce -c "$P4D -r $P4ROOT -L $P4LOG -p $P4PORT -J $P4JOURNAL -q > /dev/null& echo \$!" > $P4D_PID
+
+	# Wait a while to make sure perforce started
+	sleep 1
+
+	# See if perforce is running
+	if [ -e "$P4D_PID" ]; then
+		PID=$(cat $P4D_PID)
+		ps cax | grep $PID > /dev/null
+
+		if [ $? -eq 0 ]; then
+			# Start Broker
+			su perforce -c "$P4BROKER -c $P4BROKER_CONF -q > /dev/null& echo \$!" > $P4BROKER_PID
+		else
+			ERORR="Perforce failed to start"
+		fi
+		
+		return $?
+	fi
+
+	if [ ! -e "$P4D_PID" ]; then
+		ERROR="Perforce failed to start"
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# Stop the specified Perforce Service
+#-----------------------------------------------------------------------------------------------
+function stop
+{
+	# Unset Error
+	ERROR=''
+	
+	# Stop Broker
+	if [ -e "$P4BROKER_PID" ]; then
+		PID=$(cat $P4BROKER_PID)
+		if /bin/kill -SIGTERM $PID > /dev/null; then
+			rm -f $P4BROKER_PID
+		else
+			ERROR="Failed to kill broker process"
+			return 1;
+		fi
+	fi
+	
+	# Stop Perforce
+	if [ -e "$P4D_PID" ]; then
+		PID=$(cat $P4D_PID)
+		if /bin/kill -SIGTERM $PID > /dev/null; then
+			rm -f $P4D_PID
+		else
+			ERROR="Failed to kill perforce process"
+			return 1
+		fi
+	fi
+	
+	return 0;
+}
+
+#-----------------------------------------------------------------------------------------------
+# Rotate the logfile
+#-----------------------------------------------------------------------------------------------
+function rotate {
+	# Unset Error
+	ERROR=''
+
+	# Rotate Logfile
+	COUNTER=$($P4 -p $P4PORT counter journal)
+	echo "Rotating $P4LOG to $P4BACKUP/$DEPOT.log.$COUNTER..."	
+	if su - perforce -c "mv $P4LOG $P4BACKUP/$DEPOT.log.$COUNTER"; then
+		# Delete Old Backups
+		echo "Removing old logs out of $P4BACKUP:"	
+		/usr/bin/find $P4BACKUP/ -type f -name "*.log.*" -mtime +22 -exec /bin/rm -f {} \; -print
+		return 0
+	else
+		ERROR="Rotate failed"
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# Create a checkpoint of the Perforce Database
+#-----------------------------------------------------------------------------------------------
+function checkpoint
+{
+	# Unset Error
+	ERROR=''
+
+	# Create Checkpoint
+	if rotate && su - perforce -c "$P4D -r $P4ROOT -J $P4JOURNAL -f -z -jc $P4BACKUP/$DEPOT"; then
+		# Delete Old Backups
+		/usr/bin/find $P4BACKUP/ -type f -name "*.ckp.*.gz*" -mtime +22 -exec /bin/rm -f {} \; -print
+
+		# Identify New Checkpoint File
+		CHECKPOINT_FILE=`/bin/ls -t $P4BACKUP/$DEPOT.ckp.*.gz | /usr/bin/head -1`
+		return 0
+	else
+		ERROR="Checkpoint failed"
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# Truncate a journal file
+#-----------------------------------------------------------------------------------------------
+function truncate
+{
+	# Unset Error
+	ERROR=''
+	
+	# Truncate Journal
+	if rotate && su - perforce -c "$P4D -r $P4ROOT -J $P4JOURNAL -f -z -jj $P4BACKUP/$DEPOT"; then
+		# Delete Old Backups
+		/usr/bin/find $P4BACKUP/ -type f -name "*.jnl.*.gz*" -mtime +10 -exec /bin/rm -f {} \; -print
+
+		# Identify New Journal File
+		JOURNAL_FILE=`/bin/ls -t $P4BACKUP/$DEPOT.jnl.*.gz | /usr/bin/head -1`
+		return 0
+	else
+		ERROR="Truncate failed"
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# Recover from a checkpoint
+#-----------------------------------------------------------------------------------------------
+function recover
+{
+	# Unset Error
+	ERROR=''
+
+	# Restore from checkpoint
+	if su - perforce -c "$P4D -r $P4ROOT -z -f -jr $CHECKPOINT_FILE"; then
+		return 0
+	else
+		ERROR="Checkpoint recovery failed"
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# See if the service is running
+#-----------------------------------------------------------------------------------------------
+function running
+{
+	if [ $running -ne 0 ]; then
+		return 1;
+	else
+		return 0;
+	fi
+}
+
+#-----------------------------------------------------------------------------------------------
+# Handle the specified action
+#-----------------------------------------------------------------------------------------------
+case "$ACTION" in
+create)
+	# Don't let them b0rk an existing install
+	if [ -f "/perforce/$DEPOT/p4d.conf" ]; then
+		echo "Perforce instance $DEPOT already exits."
+		exit
+	fi
+
+	# Make sure necessary dependencies are available
+	if [ ! -d "/export/perforce" ]; then
+		echo "/export/perforce not available"
+		exit
+	fi
+
+	echo "Creating perforce instance $DEPOT"
+
+	# Get Probable IP Address
+	DEFAULTHOST=`ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+
+	# Collect Informationz
+	echo -n " What IP Address will this service use($DEFAULTHOST)? "
+	read HOST
+	if [ -z "$HOST" ]; then
+		HOST=$DEFAULTHOST
+	fi
+
+	echo -n " What Port will this service run on(1666)? "
+	read PORT
+	if [ -z $PORT ]; then
+		PORT=1666
+	fi
+
+	LATEST=`readlink /export/perforce/binaries/latest`
+	echo -n " What Version of Perforce would you like($LATEST)? "
+	read VERSION
+	if [ -z $VERSION ]; then
+		VERSION=$LATEST
+	fi
+	if [ ! -f "/export/perforce/binaries/$VERSION/p4d" ]; then
+		echo "Version $VERSION not available"
+		exit
+	fi
+
+	echo -n " What User should this service run as(perforce)? "
+	read P4USER
+	if [ -z "$P4USER" ]; then
+		P4USER=perforce
+	fi
+	if ! grep -q "^$P4USER:" /etc/passwd; then
+		echo "User $P4USER not found"
+		exit
+	fi
+
+	echo -n " What Group can administer this service(p4admin)? "
+	read P4GROUP
+	if [ -z "$P4GROUP" ]; then
+		P4GROUP=p4admin
+	fi
+	if ! grep -q "^$P4GROUP:" /etc/group; then
+		echo "Group $P4GROUP not found"
+		exit
+	fi
+
+	# Set Other Default Values
+	P4PORT=$HOST:$PORT
+	P4LOG=/perforce/$DEPOT/log/logfile
+	P4ROOT=/perforce/$DEPOT/db
+	P4BACKUP=/perforce/$DEPOT/backup
+
+	# Confirmation
+	echo "Building with the following values:"
+	echo " DEPOT=$DEPOT"
+	echo " P4PORT=$P4PORT"
+	echo " P4ROOT=$P4ROOT"
+	echo " P4LOG=$P4LOG"
+	echo " P4BACKUP=$P4BACKUP"
+	echo " P4USER=$P4USER"
+	echo " P4GROUP=$P4GROUP"
+	echo -n "Ok to continue(y/N)? "
+	read OK
+	if [ "$OK" != "y" ]; then
+		exit
+	fi
+
+	echo "Here we go..."
+
+	# Build Directory Structure
+	mkdir -p -m 2770 /perforce/$DEPOT/bin
+	mkdir -p -m 2770 /perforce/$DEPOT/log
+	mkdir -p -m 2770 /perforce/$DEPOT/src
+	mkdir -p -m 2770 /perforce/$DEPOT/db
+	mkdir -p -m 2770 /perforce/$DEPOT/backup
+
+	# Copy Binaries
+	if ! cp -f /export/perforce/binaries/$VERSION/p4* /perforce/$DEPOT/bin/; then
+		echo "Could not copy binaries"
+		exit
+	fi
+
+	# Copy License
+	if ! cp -f /export/perforce/licenses/license.$HOST /perforce/$DEPOT/db/license; then
+		echo "Could not copy license: $HOST"
+	fi
+
+	# Set Permissions
+	if ! chown -R ${P4USER}:${P4GROUP} /perforce/$DEPOT; then
+		echo "Could not set permissions for /perforce/$DEPOT"
+		exit
+	fi
+	if ! chmod -R g+w /perforce/$DEPOT; then
+		echo "Could not set permissions for /perforce/$DEPOT"
+		exit
+	fi
+
+	# Initialize Log
+	touch $P4LOG	
+	chown ${P4USER}:${P4GROUP} $P4LOG
+
+	# Create Configuration File
+	echo "DEPOT=$2" > $P4D_CONF
+	echo "HOST=$HOST" >> $P4D_CONF
+	echo "PORT=$PORT" >> $P4D_CONF
+	echo "P4PORT=\${HOST}:\${PORT}" >> $P4D_CONF
+	echo "P4D=\"/perforce/\$DEPOT/bin/p4d -C1\"" >> $P4D_CONF
+	echo "P4BROKER=\"/perforce/\$DEPOT/bin/p4broker" >> $P4D_CONF
+	echo "LOCKFILE=/var/lock/subsys/p4.\$DEPOT" >> $P4D_CONF
+	echo "P4ROOT=/perforce/\$DEPOT/db" >> $P4D_CONF
+	echo "P4JOURNAL=/perforce/\$DEPOT/log/journal" >> $P4D_CONF
+	echo "P4LOG=/perforce/\$DEPOT/log/logfile" >> $P4D_CONF
+	echo "P4BACKUP=/perforce/\$DEPOT/backup" >> $P4D_CONF
+	echo "P4=/perforce/\$DEPOT/bin/p4" >> $P4D_CONF
+	echo "P4USER=$P4USER" >> $P4D_CONF
+	echo "P4GROUP=$P4GROUP" >> $P4D_CONF
+	echo "PATH=\$PATH:/perforce/\$DEPOT/bin" >> $P4D_CONF
+	echo "export P4PORT P4USER P4PASSWD PATH" >> $P4D_CONF
+	echo "Instance $DEPOT created"
+;;
+start)
+	echo -n "Starting Perforce: "
+
+	# Can only start what isn't running
+	if running; then
+		echo "Failed [Perforce '$DEPOT' already running]"
+		exit 1
+	fi
+
+	if start; then
+		echo "Ok";
+		exit 0
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+;;
+stop)
+	echo -n "Stopping perforce: "
+
+	# Can only stop what's running
+	if ! running; then
+		echo "Failed [Perforce '$DEPOT' not running]"
+		exit 1
+	fi
+
+	if stop; then
+		echo "Ok"
+		exit 0
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+;;
+restart)
+	echo -n "Stopping perforce: "
+	if stop; then
+		echo "OK"
+		echo -n "Starting perforce: "
+		if start; then
+			echo "Ok"
+			exit 0
+		else
+			echo "Failed [$ERROR]"
+			exit 1
+		fi
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+
+	touch $LOCKFILE
+;;
+verify)
+	header
+	echo "Verifying perforce db"
+	if su - perforce -c "$P4D -r $P4ROOT -p $P4PORT -xv"; then
+		exit 0
+	else
+		exit 1
+	fi
+;;
+checkpoint)
+	header
+	
+	# Make Sure Backup Folder Exists
+	if [ ! -d $P4BACKUP ]; then
+		echo "Failed [Backup directory '$P4BACKUP' doesn't exist]"
+		exit 1
+	fi
+	
+	# Make Sure Logfile Exists
+	if [ ! -f $P4LOGFILE ]; then
+		echo "Failed ['$P4LOGFILE' missing]"
+		exit 1
+	fi
+
+	# Make Sure Journal Exists
+	if [ ! -f $P4JOURNAL ]; then
+		echo "Failed ['$P4JOURNAL' missing]"
+		exit 1
+	fi
+	
+	# Make Sure Perforce is running
+	if ! running; then
+		echo "Failed [Perforce '$DEPOT' not running]"
+		exit 1
+	fi
+
+	if checkpoint; then
+		echo "Perforce successfully created checkpoint: $CHECKPOINT_FILE."
+		exit 0
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+;;
+truncate)
+	header
+	echo "Truncating Perforce Journal"
+
+	# Make Sure Backup Folder Exists
+	if [ ! -d $P4BACKUP ]; then
+		echo "Failed [Backup directory '$P4BACKUP' doesn't exist]"
+		exit 1
+	fi
+
+	# Make Sure Journal Exists
+	if [ ! -f $P4JOURNAL ]; then
+		echo "Failed ['$P4JOURNAL' missing]"
+		exit 1
+	fi
+
+	if truncate; then
+		echo "Perforce journal successfully truncated."
+		exit 0
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+;;
+recover)
+	header
+	echo "Recovering Perforce Database"
+
+	# Make Sure Checkpoint File given
+	if [ -z "$CHECKPOINT_FILE" ]; then
+		echo "Failed [Must set CHECKPOINT_FILE variable]"
+		exit 1
+	fi
+
+	# Make Sure Checkpoint File exists
+	if [ ! -e "$CHECKPOINT_FILE" ]; then
+		echo "Failed [Checkpoint file '$CHECKPOINT_FILE' not found]"
+		exit 1
+	fi
+
+	if recover; then
+		echo "Perforce successfully recovered from checkpoint: $CHECKPOINT_FILE."
+		exit 0
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+;;
+optimize)
+	header
+	echo "Optimizing Perforce Database"
+	
+	if running && checkpoint; then
+		echo -n "Stopping database: "
+		if stop; then
+			echo "Ok"
+			echo -n "Copying Database to TMP location: "
+			mkdir -p -m 2770 /datadomain/$DEPOT/tmp
+			if /bin/mv $P4ROOT/db.* /datadomain/$DEPOT/tmp/; then
+				echo "Ok"
+				if recover; then
+					echo -n "Starting Database: "
+					if start; then
+						echo "Ok"
+						echo "Optimization Complete"
+					else
+						echo "Failed [$ERROR]"
+						exit 1
+					fi
+				else
+					echo "Failed [$ERROR]"
+					exit 1
+				fi
+			else
+				echo "Failed [$ERROR]"
+				exit 1
+			fi
+		else
+			echo "Failed [$ERROR]"
+			exit 1
+		fi
+	else
+		echo "Failed [$ERROR]"
+		exit 1
+	fi
+
+;;
+backup)
+	DATETIME=`date +"%Y-%m-%d %H:%M:%S"`
+	HOST=`hostname`
+	
+	echo Perforce Source Backup
+	echo =============================
+	echo Depot: $DEPOT
+	echo Host:  $HOST
+	echo Start: $DATETIME
+	echo -----------------------------------
+	echo Rsync files
+	echo --------------------------------------
+	echo
+	START_TIME="Start:  `date +"%Y-%m-%d %H:%M:%S"`"
+	echo "COMMAND: /usr/bin/rsync -avz --stats --exclude /bin/ --exclude /db/ --exclude /log/ /perforce/$DEPOT/ /datadomain/$DEPOT/"
+	echo
+	/usr/bin/rsync -avz --stats --exclude /bin/ --exclude /db/ --exclude /log/ /perforce/$DEPOT/ /datadomain/$DEPOT/
+	FINISH_TIME="Finish: `date +"%Y-%m-%d %H:%M:%S"`"
+	echo "$START_TIME"
+	echo "$FINISH_TIME"
+	echo ++++++++++++++++++++++++++++++++++++++++++++
+	echo
+;;
+upgrade)
+	echo "Upgrading Database: "
+	if su - perforce -c "$P4D -r $P4ROOT -L $P4LOG -xu"; then
+		echo "Perforce successfully upgraded."
+	else
+		echo "Failed [Perforce upgrade failed]"
+	fi
+;;
+status)
+	echo -n "executing p4 info: "
+	
+	# Can only stop what's running
+	if ! running; then
+		echo "Failed [Perforce '$DEPOT' not running]"
+		exit
+	fi
+	echo ""
+	echo "--------------------------"
+	$P4 info
+	echo ""
+	echo "checking the proc table:"
+	echo "--------------------------"
+	ps -efww | grep $(cat $P4D_PID) | grep -v grep
+	echo ""
+	echo "checking network ports:"
+	echo "--------------------------"
+	/bin/netstat -anp | /bin/grep $P4PORT
+;;
+info)
+	echo "Databases:		 "$P4ROOT;
+	echo "Service:	   "$P4PORT;
+	echo "Log:			"$P4LOG;
+	echo "Journal:	   "$P4JOURNAL;
+	echo "Backups:	   "$P4BACKUP;
+	echo -n "Version:		  ";
+	su - perforce -c "$P4D -V|grep Rev"
+;;
+*)
+	echo "Usage: perforce {start|stop|restart|status|checkpoint|truncate|info|create|upgrade|verify|recover|optimize|backup}"
+	exit 1
+esac
+exit 0

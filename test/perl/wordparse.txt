@@ -1,0 +1,19 @@
+open a file of sentences
+sentences end with a period
+words are separated by spaces or a ", "
+
+loop through the file and reverse the order of all the words in the sentence.
+
+# loop through the file and revers the order of the 3rd word in the sentence.
+
+
+open file
+
+pass 1 loop through file reading one line at a time
+strip off trailing period
+split sentance into words
+count number of words
+starting with last word add to new array in reverse order
+put reversed list of words back into string
+print out string
+repeat until EOF

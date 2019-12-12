@@ -1,0 +1,41 @@
+Machine name,IP,Location,Purpose
+test-01,250.124.25.1,Westwood,Build
+test-02,250.124.26.2,Boston,build
+test-03,250.124.27.3,Burbank,Ci src
+test-04,250.124.28.4,Newton,CI data
+test-05,250.124.25.5,Westwood,Build
+test-06,250.124.26.6,Boston,build
+test-07,250.124.27.7,Burbank,Ci src
+test-08,250.124.28.8,Newton,CI data
+test-09,250.124.25.9,Westwood,Build
+test-10,250.124.26.10,Boston,build
+test-11,250.124.27.11,Burbank,Ci src
+test-12,250.124.28.12,Newton,CI data
+test-13,250.124.25.13,Westwood,Build
+test-14,250.124.26.14,Boston,build
+test-15,250.124.27.15,Burbank,Ci src
+test-16,250.124.28.16,Newton,CI data
+test-17,250.124.25.17,Westwood,Build
+test-18,250.124.26.18,Boston,build
+test-19,250.124.27.19,Burbank,Ci src
+test-20,250.124.28.20,Newton,CI data
+test-21,250.124.25.21,Westwood,Build
+test-22,250.124.26.22,Boston,build
+test-23,250.124.27.23,Burbank,Ci src
+test-24,250.124.28.24,Newton,CI data
+test-25,250.124.25.25,Westwood,Build
+test-26,250.124.26.26,Boston,build
+test-27,250.124.27.27,Burbank,Ci src
+test-28,250.124.28.28,Newton,CI data
+test-29,250.124.25.29,Westwood,Build
+test-30,250.124.26.30,Boston,build
+test-31,250.124.27.31,Burbank,Ci src
+test-32,250.124.28.32,Newton,CI data
+test-33,250.124.25.33,Westwood,Build
+test-34,250.124.26.34,Boston,build
+test-35,250.124.27.35,Burbank,Ci src
+test-36,250.124.28.36,Newton,CI data
+test-37,250.124.25.37,Westwood,Build
+test-38,250.124.26.38,Boston,build
+test-39,250.124.27.39,Burbank,Ci src
+test-40,250.124.28.40,Newton,CI data

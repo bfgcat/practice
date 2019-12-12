@@ -1,0 +1,60 @@
+$VAR1 = {
+    'Component' => {
+       'game_prop' => {
+          'directory' => {
+                   'help\\dll\\' => {
+                      'file' => [
+                    'dbhelp.dll',
+                    'khelp.dll'
+                        ]
+                    },
+                   'MSVC\\7.2003\\dll\\' => {
+                       'file' => [
+                           'msvcp71.dll',
+                           'msvcp71d.dll',
+                           'msvcr71.dll',
+                           'msvcr71d.dll'
+                         ]
+                     },
+                   'tools\\bin\\' => {
+                       'file' => [
+                     'foo.exe',
+                     'foo1.exe',
+                     'foo2.exe',
+                     'goo.exe',
+                     'goo1.exe'
+                         ]
+                     }
+                 }
+              },
+       'game_foo2' => {
+          'nozip' => '1',
+          'directory' => {
+                   'output\\bin\\engine\\' => {
+                         'file' => 'release\\ping_client.*'
+                       },
+                   'output\\bin\\game\\debug\\' => {
+                       'file' => 'gameslimclient.*'
+                     },
+                   'sdk\\MSVC\\8.2005\\redist\\' => {
+                        'file' => 'vcredist_x86_VC8_SP1.exe'
+                      },
+                   'sdk\\7zip\\4.23\\' => {
+                     'file' => '7za.exe'
+                   },
+                   'src\\engine\\odbc\\' => {
+                       'file' => 'datasources-example.ini'
+                     },
+                   'sdk\\MSVC\\7.2003\\dll\\' => {
+                     'file' => [
+                         'msvcp71.dll',
+                         'msvcr71.dll',
+                         'msvcp71d.dll',
+                         'msvcr71d.dll'
+                       ]
+                         },
+                   'tools\\dll\\' => {
+                       'file' => [
+                     'dbghelp.dll',
+                     'ntwdblib.dll'
+                         ]
