@@ -1,6 +1,6 @@
 pwd
 
-repos="DeploymentAutomation ECB-API-CONFIG"
+repos="RandomRepo"
 
 for repo in $repos
 do
